@@ -24,8 +24,8 @@ jobs:
     - name: Lint with pycodestyle(pep8)
       run: |
         pip install pycodestyle
-        pycodestyle .
+        pycodestyle .  --ignore=E501
     - name: Test with pylint
       run: |
         pip install pylint
-        pylint foreca_notify.py
+        pylint -E foreca_notify.py

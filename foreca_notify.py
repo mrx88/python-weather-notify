@@ -155,5 +155,6 @@ def main(city=None, country=None):
     except Exception as error:
         logging.error("Error: %s", error)
 
+
 if __name__ == '__main__':
     main()
