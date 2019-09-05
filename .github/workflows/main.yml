@@ -34,7 +34,7 @@ jobs:
     - name: Build Docker image
       run: |
         docker build . --file Dockerfile --tag python-weather-notify:latest 
-    - name: Kind k8s test cluster set up
+    - name: Test in Kind k8s cluster
       run: |
         export GOBIN=$(go env GOPATH)/bin
         export PATH=$PATH:$GOBIN
@@ -49,8 +49,6 @@ jobs:
         kubectl wait --for=condition=Ready pods --all --namespace kube-system
         kubectl cluster-info
         kubectl get pods -n kube-system
-    - name: Orchestrate container on k8s kind cluster
-      run: |
         kind load docker-image python-weather-notify:latest
         kubectl apply -f k8s/cron.yaml
         kubectl get cronjobs
