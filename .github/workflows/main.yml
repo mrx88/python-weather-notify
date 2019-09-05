@@ -49,6 +49,10 @@ jobs:
         kubectl wait --for=condition=Ready pods --all --namespace kube-system
         kubectl cluster-info
         kubectl get pods -n kube-system
+    - name: Orchestrate container on k8s kind cluster
+      run: |
         kind load docker-image python-weather-notify:latest
         kubectl apply -f k8s/cron.yaml
-        kubectl get cronjobs    
+        kubectl get cronjobs
+        kubectl create job --from=cronjob/foreca-weather-notification weather-notify-001
+        kubectl describe jobs/weather-notify-001
