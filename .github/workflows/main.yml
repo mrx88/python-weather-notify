@@ -1,0 +1,9 @@
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Linting
+      # This step checks out a copy of your repository.
+      - uses: actions/checkout@v1
+      # This step references the directory that contains the action.
+      - uses: ./.github/actions/code-lint
