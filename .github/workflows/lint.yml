@@ -1,4 +1,4 @@
-name: Python package
+name: Code Linting
 
 on: [push]
 
@@ -21,13 +21,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pipenv
+        pipenv shell
         pipenv install --dev
     - name: Lint with pycodestyle(pep8)
       run: |
-        pycodestyle .  --ignore=E501
+        pipenv run pycodestyle .  --ignore=E501
     - name: Test with pylint
       run: |
-        pylint -E foreca_notify.py
+        pipenv run pylint -E foreca_notify.py
     - name: Check for PEP 508 requirements and vulnerabilities
       run: |
         pipenv check    
