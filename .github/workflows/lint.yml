@@ -29,3 +29,7 @@ jobs:
       run: |
         pip install pylint
         pylint -E foreca_notify.py
+    - name: Check for vulnerabilities
+      run: |
+        pip install pipenv
+        pipenv check    
