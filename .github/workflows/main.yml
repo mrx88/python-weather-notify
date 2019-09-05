@@ -32,4 +32,4 @@ jobs:
       run: |
         pipenv check
     - name: Build Docker image
-    - uses: ./.github/actions/image-build        
+      uses: ./.github/actions/image-build        
