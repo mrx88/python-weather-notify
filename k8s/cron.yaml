@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
           - name: foreca-weather-notification
-            image: python-foreca:v2
+            image: python-weather-notify:v2
             resources:
              limits:
               memory: "128Mi"
