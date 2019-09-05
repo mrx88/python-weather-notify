@@ -136,7 +136,7 @@ def main(city=None, country=None):
                         format='%(asctime)s - %(levelname)s - %(message)s')
     try:
         #  Get data from Foreca
-        foreca = Globals('http://www.foreca.com/{0}/{1}?details=20160804'.format(country, city))
+        foreca = Globals('http://www.foreca.com/{0}/{1}?details=20160804&units=eu&tf=24h'.format(country, city))
         urldata = foreca.getdata()
         gethour = foreca.gethour(urldata)
         getrain = foreca.getrain(urldata)
