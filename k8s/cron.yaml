@@ -1,0 +1,44 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: foreca-weather-notification
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: foreca-weather-notification
+            image: python-foreca:v2
+            resources:
+             limits:
+              memory: "128Mi"
+              cpu: "500m"
+            env:
+              - name: MS_TEAMS_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: ms-teams-token
+                    key: hook
+              - name: TWILIO_SID
+                valueFrom:
+                  secretKeyRef:
+                    name: twilio-sid
+                    key: value
+              - name: TWILIO_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: twilio-token
+                    key: value
+              - name: TWILIO_SMS_FROM
+                valueFrom:
+                  secretKeyRef:
+                    name: twilio-sms-from
+                    key: value
+              - name: TWILIO_SMS_TO
+                valueFrom:
+                  secretKeyRef:
+                    name: twilio-sms-to
+                    key: value                
+          restartPolicy: OnFailure
