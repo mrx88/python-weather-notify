@@ -35,18 +35,10 @@ jobs:
       run: |
         docker build . --file Dockerfile --tag python-weather-notify:latest 
     - name: Test in Kind k8s cluster
+      uses: engineerd/setup-kind@v0.1.0
+        with:
+        version: "v0.5.0"
       run: |
-        export GOBIN=$(go env GOPATH)/bin
-        export PATH=$PATH:$GOBIN
-        mkdir -p $GOBIN
-
-        curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-        chmod +x kubectl && mv kubectl $GOBIN
-        wget https://github.com/kubernetes-sigs/kind/releases/download/v0.5.1/kind-linux-amd64 && chmod +x kind-linux-amd64 && mv kind-linux-amd64 $GOBIN/kind
-
-        kind create cluster --wait 300s
-        export KUBECONFIG="$(kind get kubeconfig-path)"
-        kubectl wait --for=condition=Ready pods --all --namespace kube-system
         kubectl cluster-info
         kubectl get pods -n kube-system
         kind load docker-image python-weather-notify:latest
