@@ -32,6 +32,7 @@ jobs:
       run: |
         pipenv check
     - name: Build Docker image
+    # TODO: push image to private docker registry
       run: |
         docker build . --file Dockerfile --tag python-weather-notify:latest 
 
@@ -53,18 +54,33 @@ jobs:
        TWILIO_SMS_TO: ${{ secrets.TWILIO_SMS_TO }}
        
       run: |
+       # TODO: pull image from private docker registry
        docker build . --file Dockerfile --tag python-weather-notify:latest
        docker run --rm -e MS_TEAMS_TOKEN="${MS_TEAMS_TOKEN}" -e TWILIO_SID="${TWILIO_SID}" -e TWILIO_TOKEN="${TWILIO_TOKEN}" -e TWILIO_SMS_FROM="${TWILIO_SMS_FROM}" -e TWILIO_SMS_TO="${TWILIO_SMS_TO}" python-weather-notify:latest        
-    - name: Testing on k8s kind cluster
+    - name: Testing on k8s kind cluster - secrets
+      env: 
+       MS_TEAMS_TOKEN: ${{ secrets.MS_TEAMS_TOKEN }}
+       TWILIO_SID: ${{ secrets.TWILIO_SID }}
+       TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
+       TWILIO_SMS_FROM: ${{ secrets.TWILIO_SMS_FROM }}
+       TWILIO_SMS_TO: ${{ secrets.TWILIO_SMS_TO }}
+       
       run: |
         export KUBECONFIG="$(kind get kubeconfig-path)"
+        kubectl create secret generic ms-teams-token --from-literal=hook="${MS_TEAMS_TOKEN}"
+        kubectl create secret generic twilio-sid --from-literal=value="${TWILIO_SID}"
+        kubectl create secret generic twilio-token --from-literal=value="${TWILIO_TOKEN}"
+        kubectl create secret generic twilio-sms-from --from-literal=value="${TWILIO_SMS_FROM}"
+        kubectl create secret generic twilio-sms-to --from-literal=value="${TWILIO_SMS_TO}"
+        kubectl get secrets
         kubectl cluster-info
-        kubectl get pods -n kube-system
+    - name: Testing on k8s kind cluster - cron deploy
+      run: |
         kind load docker-image python-weather-notify:latest
         kubectl apply -f k8s/cron.yaml
         kubectl get cronjobs
         kubectl create job --from=cronjob/foreca-weather-notification weather-notify-001
         kubectl describe jobs/weather-notify-001
         kubectl describe pods/$(kubectl get pods --selector=job-name=weather-notify-001 --output=jsonpath={.items\[\].metadata.name})
-        kubectl wait --for=condition=Ready pods --all --namespace default       
-        kubectl logs $(kubectl get pods --selector=job-name=weather-notify-001 --output=jsonpath={.items\[\].metadata.name})
+        # kubectl wait --for=condition=Ready pods --all --namespace default       
+        # kubectl logs $(kubectl get pods --selector=job-name=weather-notify-001 --output=jsonpath={.items\[\].metadata.name})
