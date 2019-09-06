@@ -54,7 +54,7 @@ jobs:
        
       run: |
        docker build . --file Dockerfile --tag python-weather-notify:latest
-       docker run --rm -it -e MS_TEAMS_TOKEN="${MS_TEAMS_TOKEN}" -e TWILIO_SID="${TWILIO_SID}" -e TWILIO_TOKEN="${TWILIO_TOKEN}" -e TWILIO_SMS_FROM="${TWILIO_SMS_FROM}" -e TWILIO_SMS_TO="${TWILIO_SMS_TO}" python-weather-notify:latest        
+       docker run --rm -e MS_TEAMS_TOKEN="${MS_TEAMS_TOKEN}" -e TWILIO_SID="${TWILIO_SID}" -e TWILIO_TOKEN="${TWILIO_TOKEN}" -e TWILIO_SMS_FROM="${TWILIO_SMS_FROM}" -e TWILIO_SMS_TO="${TWILIO_SMS_TO}" python-weather-notify:latest        
     - name: Testing on k8s kind cluster
       run: |
         export KUBECONFIG="$(kind get kubeconfig-path)"
