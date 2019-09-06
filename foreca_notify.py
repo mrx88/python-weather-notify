@@ -45,14 +45,16 @@ class Globals:
         return details.select('strong')[2].getText()
 
     def gettemp(self, urldata):
-        """Get temprerature"""
+        """Get temperature"""
         details = urldata.findAll("div", {"class": "c3"})[1]
         return details.select('strong')[0].getText()
 
     def converttime(self, gethour):
-        """test"""
+        """Get alerttime"""
         eventime = str(time.strftime("%Y-%m-%d")) + gethour
         eventimeformat = datetime.datetime.strptime(eventime, "%Y-%m-%d %H:%M")
+        # TODO: fix delta to automatically reflect UTC time
+        # consider using pytz library.
         alerttime = (eventimeformat - datetime.timedelta(hours=4))
         return alerttime
 
