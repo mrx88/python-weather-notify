@@ -54,5 +54,6 @@ jobs:
         kubectl get cronjobs
         kubectl create job --from=cronjob/foreca-weather-notification weather-notify-001
         kubectl describe jobs/weather-notify-001
+        kubectl describe pods/$(kubectl get pods --selector=job-name=weather-notify-001 --output=jsonpath={.items\[\].metadata.name})
         kubectl wait --for=condition=Ready pods --all --namespace default       
         kubectl logs $(kubectl get pods --selector=job-name=weather-notify-001 --output=jsonpath={.items\[\].metadata.name})
