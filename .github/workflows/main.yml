@@ -34,18 +34,18 @@ jobs:
     - name: Build Docker image
       run: |
         docker build . --file Dockerfile --tag python-weather-notify:latest 
-    - name: Test in Kind k8s cluster
-      uses: engineerd/setup-kind@v0.1.0
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: engineerd/setup-kind@v0.1.0
       with:
-        version: "v0.5.0"
+            version: "v0.5.0"        
+    - name: Testing on k8s kind cluster
       run: |
+        export KUBECONFIG="$(kind get kubeconfig-path)"
         kubectl cluster-info
         kubectl get pods -n kube-system
-        kind load docker-image python-weather-notify:latest
-        kubectl apply -f k8s/cron.yaml
-        kubectl get cronjobs
-        kubectl create job --from=cronjob/foreca-weather-notification weather-notify-001
-        kubectl describe jobs/weather-notify-001
-        kubectl describe pods/$(kubectl get pods --selector=job-name=weather-notify-001 --output=jsonpath={.items\[\].metadata.name})
-        kubectl wait --for=condition=Ready pods --all --namespace default       
-        kubectl logs $(kubectl get pods --selector=job-name=weather-notify-001 --output=jsonpath={.items\[\].metadata.name})
