@@ -12,7 +12,9 @@ spec:
           - name: foreca-weather-notification
             image: python-weather-notify:latest
             resources:
-
+             limits:
+              memory: "128Mi"
+              cpu: "500m"
             env:
               - name: MS_TEAMS_TOKEN
                 valueFrom:

@@ -1,4 +1,4 @@
-name: Weather Notify Build
+name: Weather Notify CI/CD pipeline
 
 on: [push]
 
@@ -36,6 +36,7 @@ jobs:
         docker build . --file Dockerfile --tag python-weather-notify:latest 
 
   test:
+    needs: [build]
 
     runs-on: ubuntu-latest
     steps:
@@ -48,3 +49,11 @@ jobs:
         export KUBECONFIG="$(kind get kubeconfig-path)"
         kubectl cluster-info
         kubectl get pods -n kube-system
+        kind load docker-image python-weather-notify:latest
+        kubectl apply -f k8s/cron.yaml
+        kubectl get cronjobs
+        kubectl create job --from=cronjob/foreca-weather-notification weather-notify-001
+        kubectl describe jobs/weather-notify-001
+        kubectl describe pods/$(kubectl get pods --selector=job-name=weather-notify-001 --output=jsonpath={.items\[\].metadata.name})
+        kubectl wait --for=condition=Ready pods --all --namespace default       
+        kubectl logs $(kubectl get pods --selector=job-name=weather-notify-001 --output=jsonpath={.items\[\].metadata.name})
