@@ -36,7 +36,7 @@ jobs:
         docker build . --file Dockerfile --tag python-weather-notify:latest 
     - name: Test in Kind k8s cluster
       uses: engineerd/setup-kind@v0.1.0
-        with:
+      with:
         version: "v0.5.0"
       run: |
         kubectl cluster-info
