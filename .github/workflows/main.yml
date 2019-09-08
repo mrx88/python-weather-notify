@@ -96,3 +96,22 @@ jobs:
         kubectl describe pods/$(kubectl get pods --selector=job-name=weather-notify-001 --output=jsonpath={.items\[\].metadata.name})
         # kubectl wait --for=condition=Ready pods --all --namespace default       
         # kubectl logs $(kubectl get pods --selector=job-name=weather-notify-001 --output=jsonpath={.items\[\].metadata.name})
+
+  deploy:
+    needs: [test]
+    name: deploy to k8s cluster
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: deploy cron resource to k8s cluster
+      uses: steebchen/kubectl@master
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      with:
+        args: '"apply -f k8s/cron.yaml"'
+    - name: verify deployment
+      uses: steebchen/kubectl@master
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      with:
+        args: '"get cronjobs"'
