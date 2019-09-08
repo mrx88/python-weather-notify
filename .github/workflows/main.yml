@@ -32,9 +32,15 @@ jobs:
       run: |
         pipenv check
     - name: Build Docker image
-    # TODO: push image to private docker registry
       run: |
-        docker build . --file Dockerfile --tag python-weather-notify:latest 
+        docker build . --file Dockerfile --tag python-weather-notify:latest
+    - name: Push Docker image to ACR
+      env: 
+       DOCKER_REGISTRY_PW: ${{ secrets.DOCKER_REGISTRY_PW }}    
+      run: |
+        docker login -u martinacrdev -p "${DOCKER_REGISTRY_PW}" martinacrdev.azurecr.io
+        docker tag python-weather-notify:latest martinacrdev.azurecr.io/python-weather-notify:latest
+        docker push martinacrdev.azurecr.io/python-weather-notify:latest
 
   test:
     needs: [build]
@@ -45,18 +51,19 @@ jobs:
     - uses: engineerd/setup-kind@v0.1.0
       with:
             version: "v0.5.0"
-    - name: Docker run
+    - name: Docker image pull and container run
       env: 
        MS_TEAMS_TOKEN: ${{ secrets.MS_TEAMS_TOKEN }}
        TWILIO_SID: ${{ secrets.TWILIO_SID }}
        TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
        TWILIO_SMS_FROM: ${{ secrets.TWILIO_SMS_FROM }}
        TWILIO_SMS_TO: ${{ secrets.TWILIO_SMS_TO }}
+       DOCKER_REGISTRY_PW: ${{ secrets.DOCKER_REGISTRY_PW }}
        
       run: |
-       # TODO: pull image from private docker registry
-       docker build . --file Dockerfile --tag python-weather-notify:latest
-       docker run --rm -e MS_TEAMS_TOKEN="${MS_TEAMS_TOKEN}" -e TWILIO_SID="${TWILIO_SID}" -e TWILIO_TOKEN="${TWILIO_TOKEN}" -e TWILIO_SMS_FROM="${TWILIO_SMS_FROM}" -e TWILIO_SMS_TO="${TWILIO_SMS_TO}" python-weather-notify:latest        
+       docker login -u martinacrdev -p "${DOCKER_REGISTRY_PW}" martinacrdev.azurecr.io
+       docker pull martinacrdev.azurecr.io/python-weather-notify:latest
+       docker run --rm -e MS_TEAMS_TOKEN="${MS_TEAMS_TOKEN}" -e TWILIO_SID="${TWILIO_SID}" -e TWILIO_TOKEN="${TWILIO_TOKEN}" -e TWILIO_SMS_FROM="${TWILIO_SMS_FROM}" -e TWILIO_SMS_TO="${TWILIO_SMS_TO}" martinacrdev.azurecr.io/python-weather-notify:latest        
     - name: Testing on k8s kind cluster - secrets
       env: 
        MS_TEAMS_TOKEN: ${{ secrets.MS_TEAMS_TOKEN }}
@@ -75,9 +82,13 @@ jobs:
         kubectl get secrets
         kubectl cluster-info
     - name: Testing on k8s kind cluster - cron deploy
+      env: 
+       DOCKER_REGISTRY_PW: ${{ secrets.DOCKER_REGISTRY_PW }}
       run: |
         export KUBECONFIG="$(kind get kubeconfig-path)"
-        kind load docker-image python-weather-notify:latest
+        docker login -u martinacrdev -p "${DOCKER_REGISTRY_PW}" martinacrdev.azurecr.io
+        docker pull martinacrdev.azurecr.io/python-weather-notify:latest
+        # kind load docker-image python-weather-notify:latest
         kubectl apply -f k8s/cron.yaml
         kubectl get cronjobs
         kubectl create job --from=cronjob/foreca-weather-notification weather-notify-001

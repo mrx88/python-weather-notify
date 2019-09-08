@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
           - name: foreca-weather-notification
-            image: python-weather-notify:latest
+            image: martinacrdev.azurecr.io/python-weather-notify:latest
             resources:
              limits:
               memory: "128Mi"
