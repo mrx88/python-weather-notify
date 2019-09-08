@@ -99,22 +99,17 @@ jobs:
 
   deploy:
     needs: [test]
-    name: deploy to k8s cluster
+
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - name: deploy cron resource to k8s cluster
       uses: steebchen/kubectl@master
       env:
-        MS_TEAMS_TOKEN: ${{ secrets.MS_TEAMS_TOKEN }}
-        TWILIO_SID: ${{ secrets.TWILIO_SID }}
-        TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
-        TWILIO_SMS_FROM: ${{ secrets.TWILIO_SMS_FROM }}
-        TWILIO_SMS_TO: ${{ secrets.TWILIO_SMS_TO }}
         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
       with:
-        args: '"create secret generic ms-teams-token --from-literal=hook="${MS_TEAMS_TOKEN}" && apply -f k8s/cron.yaml"'
-    - name: verify deployment
+        args: '"apply -f k8s/cron.yaml"'
+    - name: verify cron resource
       uses: steebchen/kubectl@master
       env:
         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
