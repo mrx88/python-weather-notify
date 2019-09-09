@@ -1,6 +1,9 @@
 name: Weather Notify CI/CD pipeline
 
-on: [push]
+on: 
+ push:
+  branches:
+   - master
 
 jobs:
   build:
@@ -12,7 +15,7 @@ jobs:
         python-version: [3.7]
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
@@ -47,7 +50,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@master
     - uses: engineerd/setup-kind@v0.1.0
       with:
             version: "v0.5.0"
@@ -102,7 +105,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@master
     - name: deploy cron resource to k8s cluster
       uses: steebchen/kubectl@master
       env:
