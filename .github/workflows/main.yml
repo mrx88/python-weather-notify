@@ -66,7 +66,7 @@ jobs:
       run: |
        docker login -u martinacrdev -p "${DOCKER_REGISTRY_PW}" martinacrdev.azurecr.io
        docker pull martinacrdev.azurecr.io/python-weather-notify:latest
-       docker run --rm -e MS_TEAMS_TOKEN="${MS_TEAMS_TOKEN}" -e TWILIO_SID="${TWILIO_SID}" -e TWILIO_TOKEN="${TWILIO_TOKEN}" -e TWILIO_SMS_FROM="${TWILIO_SMS_FROM}" -e TWILIO_SMS_TO="${TWILIO_SMS_TO}" martinacrdev.azurecr.io/python-weather-notify:latest        
+       docker run --rm --mount source=state-volume,destination=/tmp -e MS_TEAMS_TOKEN="${MS_TEAMS_TOKEN}" -e TWILIO_SID="${TWILIO_SID}" -e TWILIO_TOKEN="${TWILIO_TOKEN}" -e TWILIO_SMS_FROM="${TWILIO_SMS_FROM}" -e TWILIO_SMS_TO="${TWILIO_SMS_TO}" martinacrdev.azurecr.io/python-weather-notify:latest        
     - name: Testing on k8s kind cluster - secrets
       env: 
        MS_TEAMS_TOKEN: ${{ secrets.MS_TEAMS_TOKEN }}
@@ -92,6 +92,7 @@ jobs:
         docker login -u martinacrdev -p "${DOCKER_REGISTRY_PW}" martinacrdev.azurecr.io
         docker pull martinacrdev.azurecr.io/python-weather-notify:latest
         # kind load docker-image python-weather-notify:latest
+        kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
         kubectl apply -f k8s/cron.yaml
         kubectl get cronjobs
         kubectl create job --from=cronjob/foreca-weather-notification weather-notify-001
@@ -106,6 +107,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    - name: deploy rancher local storageclass to k8s cluster
+      uses: steebchen/kubectl@master
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      with:
+        args: '"apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml"'    
     - name: deploy cron resource to k8s cluster
       uses: steebchen/kubectl@master
       env:
