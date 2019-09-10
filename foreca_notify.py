@@ -72,8 +72,25 @@ def thresholds(getrain, city, gethumidity, gettemp, gethour):
         warn = message1 + message2
 
         # Send notifications
-        send_teams(title, warn)
-        send_twilio(warn)
+        # Keep the state file to not spam with notifications
+        file = "/tmp/state"
+        if os.path.isfile(file):
+            file_mod_time = os.stat(file).st_mtime
+            last_time = (time.time() - file_mod_time) / 60
+
+            if last_time > 120:
+                logging.info('Sending notification as state is %s minutes old', last_time)
+                send_teams(title, warn)
+                send_twilio(warn)
+            else:
+                logging.info('Not sending notification as state is %s minutes old', last_time)
+        else:
+            logging.info('State file missing, sending notification')
+            tempfile = open(file, "w+")
+            tempfile.close()
+            send_teams(title, warn)
+            send_twilio(warn)
+
         return warn
     elif rain < 60:
         warn = 'OK:  Raining probability is low in {0} ({1})'.format(city, getrain)

@@ -8,9 +8,16 @@ spec:
     spec:
       template:
         spec:
+          volumes:
+          - name: weather-notify-pvc
+            persistentVolumeClaim:
+             claimName: local-path-pvc
           containers:
           - name: foreca-weather-notification
-            image: martinacrdev.azurecr.io/python-weather-notify:latest
+            image: python-weather-notify:v2
+            volumeMounts:
+             - mountPath: "/tmp"
+               name: weather-notify-pvc
             resources:
              limits:
               memory: "128Mi"
@@ -42,3 +49,16 @@ spec:
                     name: twilio-sms-to
                     key: value                
           restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-path-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 2Gi

@@ -193,6 +193,3 @@ pipenv install --dev
 # Lock and declare all dependencies once development is done 
 pipenv lock
 ```
-
-# TODO
-* Keep state in temp file, use k8s Persistent Volumes for not losing the state.
