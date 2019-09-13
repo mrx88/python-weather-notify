@@ -1,3 +1,4 @@
+![](https://github.com/mrx88/python-weather-notify/workflows/Weather%20Notify%20CI/CD%20pipeline/badge.svg)
 # python-weather-notify
 
 # Background
@@ -172,8 +173,6 @@ Pipeline jobs are defined accordingly:
 **NOTE:** Environment variables should be defined accordingly in GitHub secrets.
  
 Pipeline as code .yml configuration is defined in [.github/workflows/main.yml](.github/workflows/main.yml)
-
-![](https://github.com/mrx88/python-weather-notify/workflows/Weather%20Notify%20CI/CD%20pipeline/badge.svg)
 
 
 # Development

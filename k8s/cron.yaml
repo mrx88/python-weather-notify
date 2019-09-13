@@ -14,7 +14,7 @@ spec:
              claimName: local-path-pvc
           containers:
           - name: foreca-weather-notification
-            image: martinacrdev.azurecr.io/python-weather-notify:latest
+            image: acrdev88registry.azurecr.io/python-weather-notify:latest
             volumeMounts:
              - mountPath: "/tmp"
                name: weather-notify-pvc
