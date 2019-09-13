@@ -41,7 +41,7 @@ jobs:
       env: 
        DOCKER_REGISTRY_PW: ${{ secrets.DOCKER_REGISTRY_PW }}    
       run: |
-        docker login -u martinacrdev -p "${DOCKER_REGISTRY_PW}" acrdev88registry.azurecr.io
+        docker login -u acrdev88registry -p "${DOCKER_REGISTRY_PW}" acrdev88registry.azurecr.io
         docker tag python-weather-notify:latest acrdev88registry.azurecr.io/python-weather-notify:latest
         docker push acrdev88registry.azurecr.io/python-weather-notify:latest
 
@@ -64,7 +64,7 @@ jobs:
        DOCKER_REGISTRY_PW: ${{ secrets.DOCKER_REGISTRY_PW }}
        
       run: |
-       docker login -u martinacrdev -p "${DOCKER_REGISTRY_PW}" acrdev88registry.azurecr.io
+       docker login -u acrdev88registry -p "${DOCKER_REGISTRY_PW}" acrdev88registry.azurecr.io
        docker pull acrdev88registry.azurecr.io/python-weather-notify:latest
        docker run --rm --mount source=state-volume,destination=/tmp -e MS_TEAMS_TOKEN="${MS_TEAMS_TOKEN}" -e TWILIO_SID="${TWILIO_SID}" -e TWILIO_TOKEN="${TWILIO_TOKEN}" -e TWILIO_SMS_FROM="${TWILIO_SMS_FROM}" -e TWILIO_SMS_TO="${TWILIO_SMS_TO}" acrdev88registry.azurecr.io/python-weather-notify:latest        
     - name: Testing on k8s kind cluster - secrets
@@ -89,7 +89,7 @@ jobs:
        DOCKER_REGISTRY_PW: ${{ secrets.DOCKER_REGISTRY_PW }}
       run: |
         export KUBECONFIG="$(kind get kubeconfig-path)"
-        docker login -u martinacrdev -p "${DOCKER_REGISTRY_PW}" acrdev88registry.azurecr.io
+        docker login -u acrdev88registry -p "${DOCKER_REGISTRY_PW}" acrdev88registry.azurecr.io
         docker pull acrdev88registry.azurecr.io/python-weather-notify:latest
         # kind load docker-image python-weather-notify:latest
         kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
