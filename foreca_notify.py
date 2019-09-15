@@ -84,7 +84,7 @@ def thresholds(getrain, city, gethumidity, gettemp, gethour):
                 send_twilio(warn)
                 logging.info('Updating state file')
                 tempfile = open(file, "w+")
-                tempfile.close()      
+                tempfile.close()
             else:
                 logging.info('Not sending notification as state is %s minutes old', last_time)
         else:
