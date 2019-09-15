@@ -82,6 +82,9 @@ def thresholds(getrain, city, gethumidity, gettemp, gethour):
                 logging.info('Sending notification as state is %s minutes old', last_time)
                 send_teams(title, warn)
                 send_twilio(warn)
+                logging.info('Updating state file')
+                tempfile = open(file, "w+")
+                tempfile.close()      
             else:
                 logging.info('Not sending notification as state is %s minutes old', last_time)
         else:
