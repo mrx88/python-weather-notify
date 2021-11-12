@@ -108,20 +108,17 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: deploy rancher local storageclass to k8s cluster
-      uses: steebchen/kubectl@master
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      uses: steebchen/kubectl@v2.0.0
       with:
-        args: '"apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml"'    
+        config: ${{ secrets.KUBE_CONFIG_DATA }}
+        command: apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml    
     - name: deploy cron resource to k8s cluster
-      uses: steebchen/kubectl@master
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      uses: steebchen/kubectl@v2.0.0
       with:
-        args: '"apply -f k8s/cron.yaml"'
+        config: ${{ secrets.KUBE_CONFIG_DATA }}
+        command: apply -f k8s/cron.yaml
     - name: verify cron resource
-      uses: steebchen/kubectl@master
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      uses: steebchen/kubectl@v2.0.0
       with:
-        args: '"get cronjobs"'
+        config: ${{ secrets.KUBE_CONFIG_DATA }}
+        command: get cronjobs
