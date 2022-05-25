@@ -22,7 +22,10 @@ kubectl create secret generic twilio-token --from-literal=value=<twilio_token>
 kubectl create secret generic twilio-sms-from --from-literal=value=<twilio_sms_from_number>
 kubectl create secret generic twilio-sms-to --from-literal=value=<twilio_sms_to_number>
 ````
-
+4. Deploy rancher local file storage to k8s:
+```
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+```
 # Weather Notify
 
 Usage:
