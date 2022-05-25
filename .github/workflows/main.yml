@@ -107,11 +107,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: deploy rancher local storageclass to k8s cluster
-      uses: steebchen/kubectl@v2.0.0
-      with:
-        config: ${{ secrets.KUBE_CONFIG_DATA }}
-        command: apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml    
+    # - name: deploy rancher local storageclass to k8s cluster
+    #  uses: steebchen/kubectl@v2.0.0
+    #  with:
+    #    config: ${{ secrets.KUBE_CONFIG_DATA }}
+    #   command: apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml    
     - name: deploy cron resource to k8s cluster
       uses: steebchen/kubectl@v2.0.0
       with:
