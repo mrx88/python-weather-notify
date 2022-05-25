@@ -1,15 +1,12 @@
-FROM python:3.7.2-alpine
+FROM python:3.10-slim-bullseye
 
 WORKDIR /app/
 COPY requirements.txt /app/
 
-RUN apk --update add python py-pip openssl ca-certificates py-openssl wget
-RUN apk --update add --virtual build-dependencies libffi-dev openssl-dev python-dev py-pip build-base \
-  && pip install --upgrade pip \
-  && pip install -r /app/requirements.txt \
-  && apk del build-dependencies
+RUN pip install --upgrade pip \
+  && pip install -r /app/requirements.txt
 
-RUN adduser -D appuser
+RUN adduser appuser
 USER appuser
 
 COPY foreca_notify.py .
