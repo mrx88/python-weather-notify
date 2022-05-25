@@ -7,6 +7,8 @@ verify_ssl = true
 pylint = "*"
 pep8 = "*"
 autopep8 = "*"
+flake8 = "*"
+pycodestyle = "*"
 
 [packages]
 requests = "*"
@@ -15,4 +17,4 @@ twilio = "*"
 click = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.10"
